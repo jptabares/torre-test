@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Grid, Typography, Chip, makeStyles } from "@material-ui/core";
+import { Grid, Typography, Chip, makeStyles, Avatar } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   chips: {
@@ -13,23 +13,58 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function ChipColumn(props) {
-  const { data, icon, title, keys } = props;
+  const { data, icon, title, keys, isObject, isMember, jobLoc, jobRes } = props;
   const classes = useStyles();
-  let d = data;
-  if (typeof data === "object") {
-    d = Object.keys(data).map((i) => {
-      return { id: i, name: data[i] };
+  let List;
+  if (!jobLoc && !jobRes) {
+    List = data.map((row, index) => {
+      if (typeof keys != "undefined")
+        return (
+          <Chip
+            key={row[keys[0]]}
+            label={row[keys[1]] + " - " + row[keys[2]]}
+          />
+        );
+      else if (isObject)
+        return <Chip key={row.id} label={row.id + " (" + row.name + ")"} />;
+      else if (isMember)
+        return (
+          <Chip
+            key={row.subjectId}
+            avatar={<Avatar alt={row.username} src={row.picture} />}
+            label={row.name}
+          />
+        );
+      else if (typeof row !== "object") return <Chip key={index} label={row} />;
+      return <Chip key={row.id} label={row.name} />;
     });
+  } else if (jobLoc) {
+    List = (
+      <>
+        {data.remote && <Chip label="Remote" />}
+        {data.anywhere && <Chip label="Anywhere" />}
+        {data.location.length > 0
+          ? data.location.map((r, i) => {
+              return <Chip key={i} label={r.id} />;
+            })
+          : null}
+      </>
+    );
+  } else if (jobRes) {
+    List = (
+      <>
+        {data.map((r, i) => {
+          return (
+            <Chip
+              key={r.id}
+              avatar={<Avatar alt={r.person.username} src={r.person.picture} />}
+              label={r.person.name}
+            />
+          );
+        })}
+      </>
+    );
   }
-
-  const List = d.map((row) => {
-    if (typeof keys != "undefined") {
-      return (
-        <Chip key={row[keys[0]]} label={row[keys[1]] + " - " + row[keys[2]]} />
-      );
-    }
-    return <Chip key={row.id} label={row.name} />;
-  });
 
   return (
     <Grid item xs>
@@ -49,6 +84,9 @@ ChipColumn.propTypes = {
   icon: PropTypes.node.isRequired,
   title: PropTypes.string.isRequired,
   keys: PropTypes.array,
+  isObject: PropTypes.bool,
+  isMember: PropTypes.bool,
+  jobLoc: PropTypes.bool,
 };
 
 export { ChipColumn };

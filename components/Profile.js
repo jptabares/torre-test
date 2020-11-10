@@ -2,13 +2,16 @@ import React from "react";
 import PropTypes from "prop-types";
 import {
   CardHeader,
+  IconButton,
   Typography,
   Chip,
   Avatar,
   makeStyles,
 } from "@material-ui/core";
+import Link from "./Link";
 import LocationOnOutlinedIcon from "@material-ui/icons/LocationOnOutlined";
 import WorkOutlineOutlinedIcon from "@material-ui/icons/WorkOutlineOutlined";
+import SearchIcon from "@material-ui/icons/Search";
 
 const useStyles = makeStyles((theme) => ({
   avatarLarge: {
@@ -25,11 +28,21 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Profile(props) {
-  const { avatar, name, title, location } = props;
+  const { avatar, name, title, location, action } = props;
   const classes = useStyles();
 
   return (
     <CardHeader
+      action={
+        <IconButton aria-label="Job Oportunities" onClick={action}>
+          <SearchIcon />
+        </IconButton>
+      }
+      /*action={
+        <Button color="primary" component={Link} naked href="/search">
+          Jobs
+        </Button>
+      }*/
       avatar={
         <Avatar
           alt="user_profile"
@@ -59,6 +72,7 @@ Profile.propTypes = {
   name: PropTypes.string,
   title: PropTypes.string,
   location: PropTypes.string,
+  action: PropTypes.func,
 };
 
 export { Profile };

@@ -1,24 +1,12 @@
 import React from "react";
 import { useQuery } from "react-query";
 import { useRouter } from "next/router";
-import {
-  Avatar,
-  Paper,
-  CardContent,
-  CardHeader,
-  Grid,
-  makeStyles,
-  Typography,
-  Card,
-} from "@material-ui/core";
-import LocationOnOutlinedIcon from "@material-ui/icons/LocationOnOutlined";
-import WorkOutlineOutlinedIcon from "@material-ui/icons/WorkOutlineOutlined";
+import { Paper, Grid, makeStyles, Container } from "@material-ui/core";
 import { ChipColumn, Profile, Experiences, Loading } from "../../components/";
 import GradeOutlinedIcon from "@material-ui/icons/GradeOutlined";
 import LanguageOutlinedIcon from "@material-ui/icons/LanguageOutlined";
 import EqualizerOutlinedIcon from "@material-ui/icons/EqualizerOutlined";
-
-import SchoolOutlinedIcon from "@material-ui/icons/SchoolOutlined";
+import FitnessCenterOutlinedIcon from "@material-ui/icons/FitnessCenterOutlined";
 import theme from "../../styles/theme";
 
 const styles = makeStyles((theme) => ({
@@ -36,11 +24,24 @@ export default function Home() {
   const router = useRouter();
   const classes = styles();
   const { id } = router.query;
-
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
   const { data, status } = useQuery(
     ["bio", id],
     () => {
-      return fetch("/api/torre?id=" + id).then((res) => res.json());
+      return fetch("/api/bio?id=" + id).then((res) => res.json());
     },
     { enabled: id, refetchOnWindowFocus: false }
   );
@@ -50,8 +51,28 @@ export default function Home() {
   if (status === "loading") {
     return <Loading />;
   }
+
+  const handleProfileClick = (e) => {
+    e.preventDefault();
+    router.push({
+      pathname: "/search",
+      query: { pid: id },
+    });
+  };
+
+  const arExperiences = [...data?.experiences].sort((a, b) => {
+    return (
+      b.fromYear - a.fromYear ||
+      months.indexOf(b.fromMonth) - months.indexOf(a.fromMonth)
+    );
+  });
+
+  const arStats = Object.keys(data?.stats).map((i) => {
+    return { id: i, name: data?.stats[i] };
+  });
+
   return (
-    <div>
+    <Container>
       <Grid container spacing={2} className={classes.root} direction="column">
         <Grid item xs>
           <Grid container justify="center" spacing={1}>
@@ -61,6 +82,7 @@ export default function Home() {
                 name={data?.person.name}
                 title={data?.person.professionalHeadline}
                 location={data?.person.location.name}
+                action={handleProfileClick}
               />
               <Grid container justify="center" spacing={1}>
                 {data?.interests.length > 0 && (
@@ -80,9 +102,10 @@ export default function Home() {
                 )}
                 {typeof data?.stats !== "undefined" > 0 && (
                   <ChipColumn
-                    data={data?.stats}
+                    data={arStats}
                     icon={<EqualizerOutlinedIcon />}
                     title="Stats"
+                    isObject={true}
                   />
                 )}
               </Grid>
@@ -92,16 +115,22 @@ export default function Home() {
         <Grid item xs>
           <Grid container justify="center" spacing={1}>
             {data?.experiences.length > 0 && (
-              <Experiences data={data?.experiences} />
+              <Experiences data={arExperiences} />
             )}
           </Grid>
         </Grid>
         <Grid item xs>
           <Grid container justify="center" spacing={1}>
-            Strengths
+            {typeof data?.stats !== "undefined" > 0 && (
+              <ChipColumn
+                data={data?.strengths}
+                icon={<FitnessCenterOutlinedIcon />}
+                title="Strengths"
+              />
+            )}
           </Grid>
         </Grid>
       </Grid>
-    </div>
+    </Container>
   );
 }
