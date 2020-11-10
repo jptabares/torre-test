@@ -7,7 +7,10 @@ This project depicts the usage of 3 simple endpoints (Torre's API) to desing and
 - [x] Define what information could be of use and design the interfaces
 - [x] Create landing page to extract the required information (Torre _username_) - index
 - [x] Create main interface where the information is displayed - home/$username
-- [ ] Create a space to list opportunities /search/$username/$query
+- [x] Create a space to list opportunities /search?pid=$username
+- [x] Create specific job view /search/$id?pid=$username
+- [x] Allow travel back and forth between views.
+- [ ] Manage sessions to stop using URL params.
 
 ## Start
 
