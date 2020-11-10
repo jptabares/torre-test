@@ -46,9 +46,7 @@ export default function Home() {
     { enabled: id, refetchOnWindowFocus: false }
   );
 
-  console.log(data);
-
-  if (status === "loading") {
+  if (status === "loading" || typeof data === "undefined") {
     return <Loading />;
   }
 

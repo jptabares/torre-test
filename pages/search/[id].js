@@ -20,7 +20,6 @@ export default function Home() {
   const router = useRouter();
   const classes = styles();
   const { id, pid } = router.query;
-  console.log(router.query);
   const { data, status } = useQuery(
     ["job", id],
     () => {

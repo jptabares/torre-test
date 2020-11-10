@@ -43,37 +43,39 @@ const cardStyles = makeStyles({
 function Job(props) {
   const { job, profileId, handleSearch } = props;
 
+  if (typeof job === "undefined") return null;
+
   let Agreement =
-    typeof job.agreement !== "undefined"
-      ? job.agreement.type.includes("-")
-        ? job.agreement.type.split("-").join(" ")
-        : job.agreement.type.code
+    typeof job?.agreement !== "undefined"
+      ? job?.agreement.type.includes("-")
+        ? job?.agreement.type.split("-").join(" ")
+        : job?.agreement.type.code
       : null;
 
   let Commitment =
-    typeof job.commitment !== "undefined"
-      ? job.commitment.code.includes("-")
-        ? job.commitment.code.split("-").join(" ")
-        : job.commitment.code
+    typeof job?.commitment !== "undefined"
+      ? job?.commitment.code.includes("-")
+        ? job?.commitment.code.split("-").join(" ")
+        : job?.commitment.code
       : null;
 
   const classes = cardStyles();
 
   return (
     <Card className={classes.card}>
-      <CardMedia image={job.attachments[0].address} title="job-caption" />
+      <CardMedia image={job?.attachments[0].address} title="job-caption" />
       <CardHeader
         avatar={
           <Avatar
             className={classes.cardAvatar}
-            src={job.organizations[0].picture}
-            alt={job.id + "-avatar"}
+            src={job?.organizations[0].picture}
+            alt={job?.id + "-avatar"}
           />
         }
-        title={<Typography variant="h3">{job.objective}</Typography>}
+        title={<Typography variant="h3">{job?.objective}</Typography>}
         subheader={
           <Typography className={classes.subsection} variant="subtitle1">
-            {job.organizations[0].name +
+            {job?.organizations[0].name +
               " - " +
               (Agreement ? Agreement : Commitment)}
           </Typography>
@@ -82,17 +84,17 @@ function Job(props) {
       <CardContent>
         <Container>
           <Grid container justify="center" spacing={2}>
-            {job.members.length > 0 && (
+            {job?.members.length > 0 && (
               <ChipColumn
-                data={job.members}
+                data={job?.members}
                 icon={<PeopleOutlinedIcon />}
                 title="Responsible"
                 jobRes
               />
             )}
-            {job.place.location.length > 0 && (
+            {job?.place.location.length > 0 && (
               <ChipColumn
-                data={job.place}
+                data={job?.place}
                 icon={<LocationOnOutlinedIcon />}
                 title="Locations"
                 jobLoc
@@ -100,8 +102,8 @@ function Job(props) {
             )}
           </Grid>
           <Grid content justify="center" spacing={2}>
-            {job.details.length > 0 &&
-              job.details.map((r, i) => {
+            {job?.details.length > 0 &&
+              job?.details.map((r, i) => {
                 return (
                   <>
                     <Typography variant="h5" className={classes.subsection}>
